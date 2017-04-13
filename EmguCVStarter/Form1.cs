@@ -1,5 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -117,16 +119,48 @@ namespace EmguCVStarter
         //main process of image processing 
         private void Process()
         {
+            //original image
             imageBox1.Image = grayscaleImage;
 
+            //thresholding
             CvInvoke.Threshold(grayscaleImage, processedImage1, 40, 255, ThresholdType.Binary);
             imageBox2.Image = processedImage1;
 
-            CvInvoke.Canny(grayscaleImage, processedImage2, 30, 70);
+            //create black image
+            processedImage2 = grayscaleImage.Clone();
+            processedImage2.SetTo(new MCvScalar(0));
+            
+            //contour extractioin process
+            VectorOfPoint largestContour;
+            int largestContourIndex = 0;
+            double largestAreaTemp = 0;
+
+            using (Mat hierachy = new Mat())
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                //main process
+                CvInvoke.FindContours(processedImage1, contours, hierachy, RetrType.Tree, ChainApproxMethod.ChainApproxNone);
+
+                //find the area of contour
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    double area = CvInvoke.ContourArea(contours[i], false);
+                    if (area > largestAreaTemp)
+                    {
+                        largestAreaTemp = area;
+                        largestContourIndex = i;
+                    }
+                    CvInvoke.DrawContours(processedImage2, contours, i, new MCvScalar(255));
+                }
+                //CvInvoke.DrawContours(processedImage2, contours, largestContourIndex, new MCvScalar(255));
+                largestContour = new VectorOfPoint(contours[largestContourIndex].ToArray());
+            }
+
+
+
+
             imageBox3.Image = processedImage2;
 
-            CvInvoke.CLAHE(grayscaleImage, 40, new Size(8, 8), processedImage3);
-            imageBox4.Image = processedImage3;
         }
     }
 }
