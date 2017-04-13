@@ -162,12 +162,25 @@ namespace EmguCVStarter
 
 
             //center of gravity
-            MCvMoments largestContourMoment = CvInvoke.Moments(largestContour);
-            Point centerMoment = new Point((int)(largestContourMoment.M10 / largestContourMoment.M00), (int)(largestContourMoment.M01 / largestContourMoment.M00));
+            //MCvMoments largestContourMoment = CvInvoke.Moments(largestContour);
+            //Point centerMoment = new Point((int)(largestContourMoment.M10 / largestContourMoment.M00), (int)(largestContourMoment.M01 / largestContourMoment.M00));
+
+            //processedImage3 = grayscaleImage.Clone();
+            //CvInvoke.Circle(processedImage3, centerMoment, 3, new MCvScalar(255), -1);
+
+            //imageBox4.Image = processedImage3;
+
+
+
+
+
+            //ellipse fitting
+
+            RotatedRect ellipseFitted = CvInvoke.FitEllipse(largestContour);
 
             processedImage3 = grayscaleImage.Clone();
-            CvInvoke.Circle(processedImage3, centerMoment, 3, new MCvScalar(255), -1);
-
+            CvInvoke.CvtColor(processedImage3, processedImage3, ColorConversion.Gray2Bgr);
+            CvInvoke.Ellipse(processedImage3, ellipseFitted, new MCvScalar(0,0,255), 2);
             imageBox4.Image = processedImage3;
 
         }
