@@ -123,7 +123,7 @@ namespace EmguCVStarter
             imageBox1.Image = grayscaleImage;
 
             //thresholding
-            CvInvoke.Threshold(grayscaleImage, processedImage1, 40, 255, ThresholdType.Binary);
+            CvInvoke.Threshold(grayscaleImage, processedImage1, 40, 255, ThresholdType.BinaryInv);
             imageBox2.Image = processedImage1;
 
             //create black image
@@ -150,16 +150,25 @@ namespace EmguCVStarter
                         largestAreaTemp = area;
                         largestContourIndex = i;
                     }
-                    CvInvoke.DrawContours(processedImage2, contours, i, new MCvScalar(255));
+                    //CvInvoke.DrawContours(processedImage2, contours, i, new MCvScalar(255));
                 }
-                //CvInvoke.DrawContours(processedImage2, contours, largestContourIndex, new MCvScalar(255));
+                CvInvoke.DrawContours(processedImage2, contours, largestContourIndex, new MCvScalar(255));
                 largestContour = new VectorOfPoint(contours[largestContourIndex].ToArray());
             }
-
-
-
-
+            
             imageBox3.Image = processedImage2;
+
+
+
+
+            //center of gravity
+            MCvMoments largestContourMoment = CvInvoke.Moments(largestContour);
+            Point centerMoment = new Point((int)(largestContourMoment.M10 / largestContourMoment.M00), (int)(largestContourMoment.M01 / largestContourMoment.M00));
+
+            processedImage3 = grayscaleImage.Clone();
+            CvInvoke.Circle(processedImage3, centerMoment, 3, new MCvScalar(255), -1);
+
+            imageBox4.Image = processedImage3;
 
         }
     }
