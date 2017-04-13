@@ -129,7 +129,7 @@ namespace EmguCVStarter
             //create black image
             processedImage2 = grayscaleImage.Clone();
             processedImage2.SetTo(new MCvScalar(0));
-            
+
             //contour extractioin process
             VectorOfPoint largestContour;
             int largestContourIndex = 0;
@@ -155,33 +155,37 @@ namespace EmguCVStarter
                 CvInvoke.DrawContours(processedImage2, contours, largestContourIndex, new MCvScalar(255));
                 largestContour = new VectorOfPoint(contours[largestContourIndex].ToArray());
             }
-            
+
             imageBox3.Image = processedImage2;
 
 
 
 
             //center of gravity
-            //MCvMoments largestContourMoment = CvInvoke.Moments(largestContour);
-            //Point centerMoment = new Point((int)(largestContourMoment.M10 / largestContourMoment.M00), (int)(largestContourMoment.M01 / largestContourMoment.M00));
+            MCvMoments largestContourMoment = CvInvoke.Moments(largestContour);
+            Point centerMoment = new Point((int)(largestContourMoment.M10 / largestContourMoment.M00), (int)(largestContourMoment.M01 / largestContourMoment.M00));
 
-            //processedImage3 = grayscaleImage.Clone();
-            //CvInvoke.Circle(processedImage3, centerMoment, 3, new MCvScalar(255), -1);
+            processedImage3 = grayscaleImage.Clone();
+            CvInvoke.CvtColor(processedImage3, processedImage3, ColorConversion.Gray2Bgr);
+            CvInvoke.Circle(processedImage3, centerMoment, 3, new MCvScalar(0, 0, 255), -1);
 
-            //imageBox4.Image = processedImage3;
+            //draw ellipse around pupil
+            Rectangle rectBound = CvInvoke.BoundingRectangle(largestContour);
+            CvInvoke.Ellipse(processedImage3, new RotatedRect(centerMoment, rectBound.Size, 0), new MCvScalar(0,0,255), 2);
 
+            imageBox4.Image = processedImage3;
 
 
 
 
             //ellipse fitting
 
-            RotatedRect ellipseFitted = CvInvoke.FitEllipse(largestContour);
+            //RotatedRect ellipseFitted = CvInvoke.FitEllipse(largestContour);
 
-            processedImage3 = grayscaleImage.Clone();
-            CvInvoke.CvtColor(processedImage3, processedImage3, ColorConversion.Gray2Bgr);
-            CvInvoke.Ellipse(processedImage3, ellipseFitted, new MCvScalar(0,0,255), 2);
-            imageBox4.Image = processedImage3;
+            //processedImage3 = grayscaleImage.Clone();
+            //CvInvoke.CvtColor(processedImage3, processedImage3, ColorConversion.Gray2Bgr);
+            //CvInvoke.Ellipse(processedImage3, ellipseFitted, new MCvScalar(0,0,255), 2);
+            //imageBox4.Image = processedImage3;
 
         }
     }
