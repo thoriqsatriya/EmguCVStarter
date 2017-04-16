@@ -118,8 +118,12 @@ namespace EmguCVStarter
         }
 
         //main process of image processing 
-        private void Process()
+        private void Process(string path=null)
         {
+
+            if (path != null) grayscaleImage = CvInvoke.Imread(path, LoadImageType.Grayscale);
+
+
             //masking
             Mat maskingImage = new Mat();
             Mat tempImage = grayscaleImage.Clone();
@@ -209,6 +213,17 @@ namespace EmguCVStarter
                 sw.WriteLine(ellipseFitted.Center.X.ToString() + "," + ellipseFitted.Center.Y.ToString() + "," + (ellipseFitted.Size.Height / 2).ToString());
             }
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string path = "E:\\DOCUMENTS\\_research\\iris_data\\CASIA-Iris-Syn\\random\\original";
+            string[] fileEntries = Directory.GetFiles(path);
+
+            for(int i=0; i<fileEntries.Length; i++)
+            {
+                Process(fileEntries[i]);
+            }
         }
     }
 }
