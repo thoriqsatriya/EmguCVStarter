@@ -119,6 +119,17 @@ namespace EmguCVStarter
         //main process of image processing 
         private void Process()
         {
+            //masking
+            Mat maskingImage = new Mat();
+            Mat tempImage = grayscaleImage.Clone();
+
+            maskingImage = grayscaleImage.Clone();
+            maskingImage.SetTo(new MCvScalar(0));
+            CvInvoke.Circle(maskingImage, new Point(grayscaleImage.Width/2, grayscaleImage.Height/2), (int)(0.75*grayscaleImage.Height/2), new MCvScalar(255), -1);
+
+            grayscaleImage.SetTo(new MCvScalar(255));
+            tempImage.CopyTo(grayscaleImage, maskingImage);
+
             //original image
             imageBox1.Image = grayscaleImage;
 
